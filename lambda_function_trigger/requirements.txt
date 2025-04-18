@@ -1,0 +1,5 @@
+boto3
+requests
+websocket-client
+websockets
+asyncio

@@ -1,0 +1,17 @@
+numpy
+pandas
+matplotlib
+torch
+pytorch-lightning
+torchvision
+torchinfo
+torchview
+graphviz
+IPython
+lightning
+boto3
+requests==2.31.0
+ws4py
+urllib3==1.26.12i
+openpyxl
+ipykernel
