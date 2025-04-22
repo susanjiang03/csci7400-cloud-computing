@@ -8,12 +8,12 @@ import os
 s3_cient = boto3.client('s3')
 sm_client = boto3.client('sagemaker')
 notebook_instance_name = 'deepsight'
-notebook_script_name = "PTViT_NAM.ipynb"
+notebook_script_name = "final.ipynb"
 kernel_name="deepsight"
 TIMEOUT = os.environ.get("TIMEOUT", -1)
 IMAGE_SIZE = os.environ.get("IMAGE_SIZE", 100)
 BATCH_SIZE = os.environ.get("BATCH_SIZE", 100)
-MAX_EPOCHS = os.environ.get("MAX_EPOCHS", 10)
+MAX_EPOCHS = os.environ.get("MAX_EPOCHS", 2)
 
 def lambda_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -50,7 +50,7 @@ def lambda_handler(event, context):
     )
     
     enviro_varible_string=f"MAX_EPOCHS={MAX_EPOCHS} BATCH_SIZE={BATCH_SIZE}"
-    command_string = f"{enviro_varible_string} jupyter nbconvert --execute --to notebook --inplace /home/ec2-user/SageMaker/{notebook_script_name} --ExecutePreprocessor.kernel_name={kernel_name} --ExecutePreprocessor.timeout={TIMEOUT}\\r"
+    command_string = f"{enviro_varible_string} nohup jupyter nbconvert --execute --to notebook --inplace /home/ec2-user/SageMaker/{notebook_script_name} --ExecutePreprocessor.kernel_name={kernel_name} --ExecutePreprocessor.timeout={TIMEOUT}\\r"
     print(f"Sending command to sagemaker notebook instance {notebook_instance_name}: {command_string}")
     ws.send(f"""[ "stdin", "{command_string}" ]""")
     print (ws.recv())
