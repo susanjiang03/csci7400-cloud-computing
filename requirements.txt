@@ -12,6 +12,6 @@ lightning
 boto3
 requests==2.31.0
 ws4py
-urllib3==1.26.12i
+urllib3==1.26.12
 openpyxl
 ipykernel
