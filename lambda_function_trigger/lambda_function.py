@@ -3,15 +3,17 @@ from websocket import create_connection
 import boto3
 import time
 import requests
+import os
 
 s3_cient = boto3.client('s3')
 sm_client = boto3.client('sagemaker')
 notebook_instance_name = 'deepsight'
-notebook_script_name = "first.ipynb"
+notebook_script_name = "PTViT_NAM.ipynb"
 kernel_name="deepsight"
-timeout=-1
-IMAGE_SIZE=100
-BATCH_SIZE=2
+TIMEOUT = os.environ.get("TIMEOUT", -1)
+IMAGE_SIZE = os.environ.get("IMAGE_SIZE", 100)
+BATCH_SIZE = os.environ.get("BATCH_SIZE", 100)
+MAX_EPOCHS = os.environ.get("MAX_EPOCHS", 10)
 
 def lambda_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -46,8 +48,9 @@ def lambda_handler(event, context):
         host=http_hn,
         origin=f"{http_proto}//{http_hn}"
     )
-    enviro_varible_string=f"IMAGE_SIZE={IMAGE_SIZE} BATCH_SIZE={BATCH_SIZE}"
-    command_string = f"{enviro_varible_string} jupyter nbconvert --execute --to notebook --inplace /home/ec2-user/SageMaker/{notebook_script_name} --ExecutePreprocessor.kernel_name={kernel_name} --ExecutePreprocessor.timeout={timeout}\\r"
+    
+    enviro_varible_string=f"MAX_EPOCHS={MAX_EPOCHS} BATCH_SIZE={BATCH_SIZE}"
+    command_string = f"{enviro_varible_string} jupyter nbconvert --execute --to notebook --inplace /home/ec2-user/SageMaker/{notebook_script_name} --ExecutePreprocessor.kernel_name={kernel_name} --ExecutePreprocessor.timeout={TIMEOUT}\\r"
     print(f"Sending command to sagemaker notebook instance {notebook_instance_name}: {command_string}")
     ws.send(f"""[ "stdin", "{command_string}" ]""")
     print (ws.recv())
